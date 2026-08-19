@@ -75,10 +75,15 @@ jobs:
         #好吧,我不知道这玩意儿咋用,不要打我口牙QAQ
         #Actually,I don't know how to use it well,please let me go.QAQ
 
-    - name: Accept Android SDK licenses
+    - name: Prepare Android SDK for buildozer
       run: |
-        yes | "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
-        yes | "$ANDROID_SDK_ROOT"/tools/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+        # buildozer 1.6 只在 $SDK/tools/bin 下找 sdkmanager，而 GitHub Actions 预装 SDK
+        # 的 sdkmanager 在 cmdline-tools/latest 下 → 创建符号链接让其能找到
+        mkdir -p "$ANDROID_SDK_ROOT/tools/bin"
+        ln -sf "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "$ANDROID_SDK_ROOT/tools/bin/sdkmanager"
+        ln -sf "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/avdmanager" "$ANDROID_SDK_ROOT/tools/bin/avdmanager"
+        # 预接受许可证（已接受则为 no-op，不会报错）
+        yes | "$ANDROID_SDK_ROOT/tools/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
 
     - name: Build APK with Buildozer (Release)
       run: |

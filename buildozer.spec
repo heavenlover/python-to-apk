@@ -37,6 +37,9 @@ fullscreen = 0
 # 本地构建请注释掉此行，让 buildozer 自行下载 SDK
 android.sdk_path = /usr/local/lib/android/sdk
 
+# 自动接受 Android SDK 许可证（构建时若仍有许可证询问会自动应答 y，避免 CI 卡住）
+android.accept_sdk_license = True
+
 # 目标 SDK 版本与最低支持的 Android 系统版本
 android.api = 33
 android.minapi = 21
