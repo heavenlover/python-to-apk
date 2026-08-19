@@ -1,104 +1,62 @@
-name: Build Kivy Android APK In Debug Mode
+# ============================================================================
+# Buildozer 配置文件 —— 把 Python/Kivy 应用打包成 Android APK
+# 文档: https://buildozer.readthedocs.io/
+# ============================================================================
 
-on:
-  workflow_dispatch:
+[app]
 
-permissions:
-  contents: write
-  actions: read
-  checks: read
+# 应用在手机上显示的名称
+title = PhotoShow
 
-env:
-  ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
-  ANDROID_HOME: /usr/local/lib/android/sdk
-  JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
-  CYTHON_LANGUAGE_LEVEL: "3"
-  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.java-home=$JAVA_HOME -Dorg.gradle.jvmargs=-Xmx2048m"
+# 包名（只能用小写字母、数字、下划线）
+package.name = photoshow
 
-jobs:
-  build-android:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+# 包域名（反写域名，最终应用 ID 为 org.example.photoshow）
+package.domain = org.example
 
-    - name: Set up Java 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+# 源码目录（相对本文件所在目录）
+source.dir = .
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.9'#3.9以上cython无long The version above 3.9 of cython has no long integer
+# 打包时包含的文件扩展名
+source.include_exts = py,png,jpg,jpeg,kv,atlas
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-            git zip unzip \
-            python3-pip autoconf automake libtool \
-            pkg-config zlib1g-dev libncurses5-dev \
-            libncursesw5-dev cmake libffi-dev libssl-dev \
-            curl unzip openjdk-17-jdk libltdl-dev
+# 应用版本号
+version = 0.1
 
-    - name: Install Buildozer and dependencies
-      run: |
-        python -m pip install --upgrade pip
-        #下载依赖库 add your requirements
-        pip install buildozer cython==0.29.33 kivy kivymd
-        #何意味 You will need it
-        pip install python-for-android
+# 依赖库（python3 必选；需要 Material Design 时在后面追加 kivymd）
+requirements = python3,kivy
 
-    - name: Build APK with Buildozer
-      run: |
-        export PATH="$HOME/.local/bin:$PATH"
-        echo "Let's have a check:"
-        java -version
-        python --version
-        buildozer --version
-        
-        #设置环境变量解决网络问题 set environment variables to solve network problems
-        export BUILDODER_ALLOW_PLATFORM_EXEC=1
-        export USE_COLORS=0
-        
-        #开始构筑 start building
-        #buildozer -v android clean 2>&1 | tee clean.log
-        #buildozer -v android update 2>&1 | tee update.log
-        buildozer -v android debug 2>&1 | tee buildozer.log
-        
-        #查找所有APK文件并复制到bin目录 find all APK files and copy them to the bin directory
-        find . -name "*.apk" -exec cp {} ./ \; 2>/dev/null || true
+# 屏幕方向：portrait(竖屏) / landscape(横屏) / all
+orientation = portrait
 
-    - name: Check if APK was built
-      id: check-build
-      run: |
-        if ls *.apk 1> /dev/null 2>&1; then
-          echo "BUILD_FINAL_SUCCESS=true" >> $GITHUB_OUTPUT
-          echo "Found APK files:"
-          ls -la *.apk
-        else
-          echo "BUILD_FINAL_SUCCESS=false" >> $GITHUB_OUTPUT
-          echo "Didn't found APK files."
-        fi
+# 全屏显示（1=全屏，0=显示系统状态栏）
+fullscreen = 0
 
-    - name: Upload APK artifact
-      if: steps.check-build.outputs.BUILD_FINAL_SUCCESS == 'true'
-      uses: actions/upload-artifact@v4
-      with:
-        name: kivy-app-apk
-        path: bin/*.apk
-        retention-days: 30
+# ---------------------- Android ----------------------
+# 目标 SDK 版本与最低支持的 Android 系统版本
+android.api = 33
+android.minapi = 21
 
-    - name: Upload build logs
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-logs
-        path: |
-          buildozer.log
-          #clean.log
-          #update.log
-        retention-days: 7
+# NDK 版本（若构建报 NDK 相关错误，可尝试 25b / 27b）
+android.ndk = 25b
+
+# 支持的 CPU 架构（armeabi-v7a 可兼容老设备，但会显著加长构建时间）
+android.archs = arm64-v8a
+
+# 是否允许应用数据被备份
+android.allow_backup = True
+
+# ---------------------- Release 签名 ----------------------
+# 与 .github/workflows/release.yml 中自动生成的密钥保持一致
+android.keystore = DomainName.PackageName.keystore
+android.keystore.alias = DomainName.PackageName
+android.keystore.storepass = android
+android.keystore.keypass = android
+
+[buildozer]
+
+# 日志级别（0-2，2 为最详细）
+log_level = 2
+
+# 以 root 运行时给出警告
+warn_on_root = 1

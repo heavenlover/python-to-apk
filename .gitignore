@@ -1,0 +1,16 @@
+# Buildozer 构建产物
+.buildozer/
+bin/
+*.apk
+*.aab
+*.log
+
+# 签名密钥（release.yml 会自动生成，请勿提交到仓库）
+*.keystore
+
+# Python 缓存
+__pycache__/
+*.pyc
+
+# 运行时生成的占位图
+placeholder.png

@@ -32,7 +32,8 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.9'#3.9以上cython无long The version above 3.9 of cython has no long integer
+        # 3.9 以上版本的 Cython 没有 long 整数类型（python-for-android 编译需要）
+        python-version: '3.9'
 
     - name: Install system dependencies
       run: |
@@ -61,7 +62,7 @@ jobs:
         buildozer --version
         
         #设置环境变量解决网络问题 set environment variables to solve network problems
-        export BUILDODER_ALLOW_PLATFORM_EXEC=1
+        export BUILDOZER_ALLOW_PLATFORM_EXEC=1
         export USE_COLORS=0
         
         #开始构筑 start building
