@@ -54,6 +54,11 @@ jobs:
         #何意味 You will need it
         pip install python-for-android
 
+    - name: Accept Android SDK licenses
+      run: |
+        yes | "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+        yes | "$ANDROID_SDK_ROOT"/tools/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+
     - name: Build APK with Buildozer
       run: |
         export PATH="$HOME/.local/bin:$PATH"

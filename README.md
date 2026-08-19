@@ -43,5 +43,6 @@
 
 - 首次构建会下载 Android SDK / NDK 和 Python 依赖，耗时较长属正常现象。
 - 构建环境已安装 `libcairo2-dev`（KivyMD 的 `pycairo` 依赖需要系统 cairo 库，否则 `pip install kivymd` 会报 `Dependency "cairo" not found`）。
+- `buildozer.spec` 中的 `android.sdk_path` 指向 GitHub Actions 预装的 Android SDK（许可证已预先接受），可避免 `sdkmanager` 交互式询问许可证导致构建失败；本地构建时请注释掉该行。
 - Release 工作流使用的密钥密码是示例值 `android`，如需发布正式应用请自行更换。
 - 想使用 KivyMD 组件时，在 `buildozer.spec` 的 `requirements` 中追加 `kivymd` 即可。

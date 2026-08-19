@@ -33,6 +33,10 @@ orientation = portrait
 fullscreen = 0
 
 # ---------------------- Android ----------------------
+# 使用 GitHub Actions 预装的 Android SDK（许可证已预先接受，避免 sdkmanager 交互式询问）
+# 本地构建请注释掉此行，让 buildozer 自行下载 SDK
+android.sdk_path = /usr/local/lib/android/sdk
+
 # 目标 SDK 版本与最低支持的 Android 系统版本
 android.api = 33
 android.minapi = 21

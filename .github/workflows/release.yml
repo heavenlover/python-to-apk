@@ -75,6 +75,11 @@ jobs:
         #好吧,我不知道这玩意儿咋用,不要打我口牙QAQ
         #Actually,I don't know how to use it well,please let me go.QAQ
 
+    - name: Accept Android SDK licenses
+      run: |
+        yes | "$ANDROID_SDK_ROOT"/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+        yes | "$ANDROID_SDK_ROOT"/tools/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+
     - name: Build APK with Buildozer (Release)
       run: |
         export PATH="$HOME/.local/bin:$PATH"
