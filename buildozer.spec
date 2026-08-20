@@ -6,10 +6,10 @@
 [app]
 
 # 应用在手机上显示的名称
-title = PhotoShow
+title = 今日塔罗
 
 # 包名（只能用小写字母、数字、下划线）
-package.name = photoshow
+package.name = tarottoday
 
 # 包域名（反写域名，最终应用 ID 为 org.example.photoshow）
 package.domain = org.example
