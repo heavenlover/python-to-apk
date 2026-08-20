@@ -1,11 +1,13 @@
 """一款适合手机竖屏使用的单牌塔罗占卜应用。"""
 
 import random
+import os
 
 from kivy.app import App
 from kivy.animation import Animation
 from kivy.core.window import Window
 from kivy.graphics import Color, RoundedRectangle, Rotate
+from kivy.resources import resource_find
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.gridlayout import GridLayout
@@ -129,24 +131,28 @@ class TarotApp(App):
         Window.clearcolor = (0.035, 0.025, 0.09, 1)
         self.spread_name = "单张牌"
         self.cards = []
+        self.font_path = resource_find("NotoSansSC-VF.ttf") or os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "NotoSansSC-VF.ttf"
+        )
+        self.asset_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "720px")
 
         root = BoxLayout(orientation="vertical", padding=(18, 20), spacing=10)
-        root.add_widget(Label(text="今日塔罗", font_size=29, bold=True,
+        root.add_widget(Label(text="今日塔罗", font_name=self.font_path, font_size=34, bold=True,
                               color=(0.95, 0.84, 0.5, 1), size_hint_y=None, height=44))
         root.add_widget(Label(text="选择牌阵，默念问题，再让牌面展开故事",
-                              font_size=15, color=(0.75, 0.72, 0.86, 1),
+                              font_name=self.font_path, font_size=19, color=(0.75, 0.72, 0.86, 1),
                               size_hint_y=None, height=28))
 
         spread_bar = GridLayout(cols=2, spacing=7, size_hint_y=None, height=86)
         for spread_name in SPREADS:
-            button = Button(text=spread_name, font_size=15,
+            button = Button(text=spread_name, font_name=self.font_path, font_size=18,
                             background_color=(0.26, 0.16, 0.4, 1), background_normal="")
             button.bind(on_release=lambda _, name=spread_name: self.select_spread(name))
             spread_bar.add_widget(button)
         root.add_widget(spread_bar)
 
         self.spread_hint = Label(text="单张牌：抽 1 张，获得当日简短提示",
-                                 font_size=14, color=(0.88, 0.82, 0.65, 1),
+                                 font_name=self.font_path, font_size=17, color=(0.88, 0.82, 0.65, 1),
                                  size_hint_y=None, height=30)
         root.add_widget(self.spread_hint)
 
@@ -159,14 +165,14 @@ class TarotApp(App):
 
         self.result_scroll = ScrollView(do_scroll_x=False, size_hint_y=None, height=105)
         self.result = Label(text="牌面会在这里串成一段故事。",
-                    font_size=14, color=(0.85, 0.82, 0.92, 1),
+                    font_name=self.font_path, font_size=17, color=(0.85, 0.82, 0.92, 1),
                     halign="left", valign="top", size_hint_y=None)
         self.result.bind(width=self._update_result_text_size,
                  texture_size=self._update_result_height)
         self.result_scroll.add_widget(self.result)
         root.add_widget(self.result_scroll)
 
-        self.action = Button(text="开始抽牌", font_size=18, bold=True,
+        self.action = Button(text="开始抽牌", font_name=self.font_path, font_size=21, bold=True,
                              size_hint_y=None, height=54,
                              background_color=(0.71, 0.38, 0.65, 1), background_normal="")
         self.action.bind(on_release=self.draw_spread)
@@ -219,14 +225,14 @@ class TarotApp(App):
             name, meaning, filename = card
             card_box = BoxLayout(orientation="vertical", spacing=4,
                                                                  size_hint_y=None, height=image_height + 55)
-            image = TarotCardImage(source="720px/" + filename,
+            image = TarotCardImage(source=os.path.join(self.asset_dir, filename),
                                    reversed_card=reversed_card,
                                    allow_stretch=True, keep_ratio=True,
                                                                      size_hint_y=None, height=image_height)
             card_box.add_widget(image)
             direction = "逆位" if reversed_card else "正位"
             card_box.add_widget(Label(text=f"{position}\n{name} · {direction}",
-                                      font_size=14, color=(0.95, 0.9, 0.75, 1),
+                                      font_name=self.font_path, font_size=18, color=(0.95, 0.9, 0.75, 1),
                                       halign="center", size_hint_y=None, height=48))
             self.card_grid.add_widget(card_box)
             self.card_boxes.append(card_box)

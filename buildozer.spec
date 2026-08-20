@@ -18,7 +18,7 @@ package.domain = org.example
 source.dir = .
 
 # 打包时包含的文件扩展名
-source.include_exts = py,png,jpg,jpeg,kv,atlas
+source.include_exts = py,png,jpg,jpeg,kv,atlas,ttf
 
 # 应用版本号
 version = 0.1
